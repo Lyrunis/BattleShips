@@ -6,26 +6,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameLauncher {
+    private static final JPanel leftStatPanel = new JPanel();
+    private static final JPanel rightStatPanel = new JPanel();
+
+    // Definelabels for displaying stats
+    private static JLabel missStrikesLabel = new JLabel("Misses: 0 | Strikes: 0");
+    private static JLabel totalHitsMissesLabel = new JLabel("Total Hits: 0 | Total Misses: 0");
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("Battleship Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 600);
+        frame.setSize(668, 636);
 
-        // Create the ocean grid for the enemy
-        OceanGrid enemyGrid = new OceanGrid(); // No need to pass GameHandler yet
-        GameHandler gameHandler = new GameHandler(enemyGrid); // Now create GameHandler
+        // Ocean grid for the enemy
+        OceanGrid enemyGrid = new OceanGrid(null);
+        GameHandler gameHandler = new GameHandler(enemyGrid, missStrikesLabel, totalHitsMissesLabel, frame);
 
-        // Set the gameHandler for the grid
+        // gameHandler for the grid
         enemyGrid.setGameHandler(gameHandler);
 
-        // Now place ships for the enemy
+        // place ships for the enemy
         enemyGrid.placeShips();
 
-        // Create the panel for the main grid and buttons
+        // panel for the main grid and buttons
         JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());  // Using BorderLayout for better control
+        panel.setLayout(new BorderLayout());
 
-        // Add the grid to the panel
+        // grid to the panel
         JPanel gridPanel = new JPanel();
         gridPanel.setLayout(new BoxLayout(gridPanel, BoxLayout.Y_AXIS));
         gridPanel.add(new JLabel("Enemy Grid"));
@@ -33,11 +40,11 @@ public class GameLauncher {
 
         panel.add(gridPanel, BorderLayout.CENTER);
 
-        // Create the button panel for Quit and Restart
+        // button panel for Quit and Restart
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout()); // Horizontal layout for buttons
 
-        // Quit button
+        // Quit
         JButton quitButton = new JButton("Quit");
         quitButton.addActionListener(new ActionListener() {
             @Override
@@ -46,7 +53,7 @@ public class GameLauncher {
             }
         });
 
-        // Restart button
+        // Restart
         JButton restartButton = new JButton("Restart");
         restartButton.addActionListener(new ActionListener() {
             @Override
@@ -55,19 +62,31 @@ public class GameLauncher {
             }
         });
 
+        // leftStatPanel
+        leftStatPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 100, 15));
+        leftStatPanel.add(missStrikesLabel);
+
+        // rightStatPanel
+        rightStatPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 100, 15));
+        rightStatPanel.add(totalHitsMissesLabel);
+
+        // buttonPanel
+        buttonPanel.add(leftStatPanel);
         buttonPanel.add(restartButton);
         buttonPanel.add(quitButton);
+        buttonPanel.add(rightStatPanel);
 
         panel.add(buttonPanel, BorderLayout.SOUTH); // Add button panel to the bottom
 
-        // Add the panel to the frame and display it
-        frame.add(panel);
+        frame.getContentPane().add(panel);
         frame.setVisible(true);
     }
 
-    // Method to restart the game by recreating the game window
-    private static void restartGame(JFrame frame) {
-        frame.dispose(); // Close the current game window
+    // Method to restart the game
+    static void restartGame(JFrame frame) {
+        if (frame != null) {
+            frame.dispose(); // Close the current game window
+        }
         main(null); // Re-run the main method to restart the game
     }
 }

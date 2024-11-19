@@ -6,19 +6,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class OceanGrid extends JPanel {
+    private static final long serialVersionUID = 1L;
     private final int gridSize = 10;
     private final JButton[][] cellButtons = new JButton[gridSize][gridSize];
-    private GameHandler gameHandler; // This will be set via setter
+    private GameHandler gameHandler;
     private final CellStatus[][] cellStatuses = new CellStatus[gridSize][gridSize]; // Track cell status
 
     public enum CellStatus {
         EMPTY, MISS, HIT, SHIP
     }
 
-    // Constructor no longer requires a GameHandler
-    public OceanGrid() {
+    public OceanGrid(GameStats gameStats) {
         setLayout(new GridLayout(gridSize, gridSize));
         setupGrid();
+        gameHandler = new GameHandler(this, null, null, null); // Pass gameStats to GameHandler
     }
 
     // Setter method to set the GameHandler instance later
@@ -39,10 +40,10 @@ public class OceanGrid extends JPanel {
         }
     }
 
-    // Update the status of a cell (miss, hit, ship)
+    // status of a cell (miss, hit, ship)
     public void updateCell(int row, int col, String symbol, Color color) {
         JButton cellButton = cellButtons[row][col];
-        cellButton.setText(symbol);      // Set text ("X" for hit, "S" for miss)
+        cellButton.setText(symbol);      // Set text ("X" for hit, "M" for miss)
         cellButton.setBackground(color); // Set the background color (red for hit, blue for miss)
         cellButton.setEnabled(false);    // Disable button after move
     }
@@ -65,10 +66,11 @@ public class OceanGrid extends JPanel {
             this.row = row;
             this.col = col;
         }
-
+       
         @Override
         public void actionPerformed(ActionEvent e) {
-            gameHandler.handlePlayerMove(row, col);
+            gameHandler.handlePlayerMove(row, col); // Handle player move and update stats
         }
     }
+
 }
